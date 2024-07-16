@@ -1,3 +1,24 @@
+#語音轉文字
+import speech_recognition as sr
+
+# 建立Recognizer物件
+r = sr.Recognizer()
+
+# 開啟麥克風並進行錄音
+with sr.Microphone() as source:
+    print("請開始說話...(問問題)")
+    audio = r.listen(source)
+
+# 使用Google語音辨識引擎將錄音轉換為文字
+try:
+    text = r.recognize_google(audio, language='zh-TW')
+    
+    print("您說的是：" + text)
+except sr.UnknownValueError:
+    print("無法辨識您的語音")
+except sr.RequestError as e:
+    print("無法連線至Google語音辨識服務：{0}".format(e))
+
 import openpyxl
 
 # 加载 Excel 工作簿
@@ -25,7 +46,7 @@ print(data)
 import google.generativeai as genai
 import os
 
-question=input("輸入問題:")
+question=text
 
 api_key = 'AIzaSyBCcg0skdWwwG-hBucIvDCLHY9FFtzw9-0'
 genai.configure(api_key = api_key)
@@ -33,3 +54,21 @@ genai.configure(api_key = api_key)
 model = genai.GenerativeModel('gemini-pro')
 response = model.generate_content(data+question+"，如果遇到計算距離的問題，請利用勾股定理((長*長+寬*寬)開根號)的方式來計算，如果我的路徑經過了一個無法越過的物品的範圍，那就是會撞到")
 print(response.text)
+
+#文字轉語音  
+# Import the Gtts module for text  
+# to speech conversion 
+from gtts import gTTS 
+  
+# import Os module to start the audio file
+import os 
+  
+mytext = response.text
+  
+# Language we want to use 
+language = 'zh-tw'
+myobj = gTTS(text=mytext, lang=language, slow=False) 
+myobj.save("output.mp3") 
+  
+# Play the converted file 
+os.system("start output.mp3")
